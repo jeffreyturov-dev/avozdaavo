@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A Voz da Avó</title>
+<meta name="description" content="As histórias dela. Para sempre.">
+<link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#b4552f">
+<style>
+  :root{
+    --terra:#b4552f; --terra-d:#8f3f22; --cream:#faf3ea; --paper:#fffdf9;
+    --ink:#33261e; --soft:#8a7466; --gold:#d9a441; --green:#4c7a4d;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; font-family:Georgia,'Times New Roman',serif;}
+  body{background:var(--cream); color:var(--ink); min-height:100vh;}
+  header{background:linear-gradient(135deg,var(--terra),var(--terra-d)); color:#fff;
+    padding:22px 18px 16px; text-align:center; box-shadow:0 2px 12px rgba(0,0,0,.15);}
+  header h1{font-size:1.7rem; letter-spacing:.5px;}
+  header p{opacity:.9; font-style:italic; margin-top:4px; font-size:.95rem;}
+  nav{display:flex; background:var(--paper); border-bottom:1px solid #e8dcc9; position:sticky; top:0; z-index:5;}
+  nav button{flex:1; padding:14px 4px; background:none; border:none; font-size:1rem; color:var(--soft);
+    border-bottom:3px solid transparent; cursor:pointer;}
+  nav button.on{color:var(--terra); border-bottom-color:var(--terra); font-weight:bold;}
+  main{max-width:640px; margin:0 auto; padding:18px 14px 80px;}
+  .tab{display:none;} .tab.on{display:block;}
+  .card{background:var(--paper); border:1px solid #eadfc9; border-radius:14px; padding:18px;
+    margin-bottom:14px; box-shadow:0 1px 4px rgba(90,60,30,.06);}
+  .big-btn{display:block; width:170px; height:170px; border-radius:50%; margin:18px auto;
+    border:none; background:radial-gradient(circle at 35% 30%, #d4703f, var(--terra-d));
+    color:#fff; font-size:1.05rem; cursor:pointer; box-shadow:0 6px 20px rgba(143,63,34,.35);
+    transition:transform .1s;}
+  .big-btn:active{transform:scale(.95);}
+  .big-btn.rec{background:radial-gradient(circle at 35% 30%, #e04c4c, #8f2222); animation:pulse 1.4s infinite;}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(224,76,76,.5);}50%{box-shadow:0 0 0 22px rgba(224,76,76,0);}}
+  input[type=text]{width:100%; padding:12px 14px; font-size:1.05rem; border:1px solid #ddcdb2;
+    border-radius:10px; background:#fff;}
+  .btn{display:inline-block; padding:11px 20px; border:none; border-radius:10px; cursor:pointer;
+    font-size:1rem; background:var(--terra); color:#fff;}
+  .btn.ghost{background:#efe4d2; color:var(--ink);}
+  .btn.small{padding:7px 13px; font-size:.9rem;}
+  .row{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:10px;}
+  h3{font-size:1.1rem; color:var(--terra-d); margin-bottom:6px;}
+  .meta{color:var(--soft); font-size:.85rem; margin-bottom:8px;}
+  .story-text{line-height:1.55; white-space:pre-wrap; font-size:1rem;}
+  audio{width:100%; margin-top:8px;}
+  .answer{font-size:1.12rem; line-height:1.6; background:#fff8ec; border-left:4px solid var(--gold);
+    padding:14px 16px; border-radius:0 12px 12px 0; margin-top:12px; white-space:pre-wrap;}
+  .hidden{display:none;}
+  .spin{display:inline-block; width:16px; height:16px; border:2px solid #d9c4a5; border-top-color:var(--terra);
+    border-radius:50%; animation:sp 1s linear infinite; vertical-align:-3px; margin-right:6px;}
+  @keyframes sp{to{transform:rotate(360deg);}}
+  .hint{color:var(--soft); font-size:.9rem; text-align:center; margin-top:6px; line-height:1.4;}
+  .stat{display:inline-block; background:#f3e7d3; border-radius:20px; padding:4px 14px; font-size:.88rem; margin:2px;}
+  .del{float:right; background:none; border:none; color:#c07; cursor:pointer; font-size:.85rem;}
+  footer{text-align:center; color:var(--soft); font-size:.8rem; padding:14px;}
+  .trans{margin-top:10px; font-size:1rem; line-height:1.55; background:#eef5ee; border-left:4px solid var(--green);
+    padding:12px 14px; border-radius:0 12px 12px 0; white-space:pre-wrap;}
+</style>
+</head>
+<body>
+<header>
+  <h1>🧡 A Voz da Avó</h1>
+  <p>As histórias dela. Para sempre.</p>
+</header>
+<nav>
+  <button id="nb-ask" class="on" onclick="tab('ask')">Perguntar</button>
+  <button id="nb-record" onclick="tab('record')">Contar história</button>
+  <button id="nb-list" onclick="tab('list')">Histórias</button>
+</nav>
+<main>
+
+  <!-- ASK -->
+  <section id="tab-ask" class="tab on">
+    <div class="card">
+      <h3>Pergunta qualquer coisa à memória da Avó</h3>
+      <p class="meta">Ela responde com as próprias histórias que contou. Em português, como sempre.</p>
+      <input type="text" id="q" placeholder="Ex: Avó, como era a tua aldeia em Portugal?"
+             onkeydown="if(event.key==='Enter')ask()">
+      <div class="row">
+        <button class="btn" onclick="ask()">Perguntar 🌿</button>
+        <button class="btn ghost" id="hearBtn" onclick="hear()" disabled>Ouvir 🔊</button>
+        <button class="btn ghost" id="trBtn" onclick="translateAnswer()" disabled>Traduire 🇫🇷</button>
+      </div>
+      <div id="askLoading" class="hidden" style="margin-top:12px"><span class="spin"></span>A Avó está a lembrar-se…</div>
+      <div id="answer" class="answer hidden"></div>
+      <div id="trans" class="trans hidden"></div>
+    </div>
+    <div class="card" style="text-align:center">
+      <span class="stat" id="statS">… histórias</span>
+      <span class="stat" id="statW">… palavras guardadas</span>
+    </div>
+  </section>
+
+  <!-- RECORD -->
+  <section id="tab-record" class="tab">
+    <div class="card" style="text-align:center">
+      <h3 style="text-align:left">Gravar uma história da Avó</h3>
+      <p class="hint">Carrega no botão, e ela conta como quiser.<br>No fim, carrega outra vez para guardar.</p>
+      <button id="recBtn" class="big-btn" onclick="toggleRec()">🎙️<br>Gravar</button>
+      <div id="recTime" class="hint"></div>
+      <div id="upLoading" class="hidden"><span class="spin"></span>A transcrever e guardar…</div>
+    </div>
+    <div class="card">
+      <h3>Ou escrever uma história</h3>
+      <input type="text" id="wtitle" placeholder="Título (ex: A viagem de comboio, 1974)" style="margin-bottom:8px">
+      <input type="text" id="wtext" placeholder="Escreve aqui a história…" onkeydown="if(event.key==='Enter')saveWritten()">
+      <div class="row"><button class="btn" onclick="saveWritten()">Guardar</button></div>
+    </div>
+  </section>
+
+  <!-- LIST -->
+  <section id="tab-list" class="tab">
+    <div id="stories"></div>
+  </section>
+</main>
+<footer>Feito em casa, em casa. Nenhum dado sai desta rede. 🧡</footer>
+
+<script>
+let mediaRec, chunks=[], recStart, recTimer;
+
+function tab(t){
+  document.querySelectorAll('.tab').forEach(e=>e.classList.remove('on'));
+  document.querySelectorAll('nav button').forEach(e=>e.classList.remove('on'));
+  document.getElementById('tab-'+t).classList.add('on');
+  document.getElementById('nb-'+t).classList.add('on');
+  if(t==='list') loadStories();
+  if(t==='ask') loadStats();
+}
+
+async function toggleRec(){
+  const b = document.getElementById('recBtn');
+  if(mediaRec && mediaRec.state==='recording'){ mediaRec.stop(); return; }
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    chunks=[];
+    mediaRec = new MediaRecorder(stream);
+    mediaRec.ondataavailable = e=>chunks.push(e.data);
+    mediaRec.onstop = uploadRec;
+    mediaRec.start();
+    b.classList.add('rec'); b.innerHTML='⏹️<br>Guardar';
+    recStart=Date.now();
+    recTimer=setInterval(()=>{
+      const s=Math.floor((Date.now()-recStart)/1000);
+      document.getElementById('recTime').textContent='A gravar… '+Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+    },500);
+  }catch(e){ alert('Preciso de autorização para o microfone.'); }
+}
+
+async function uploadRec(){
+  clearInterval(recTimer);
+  const b=document.getElementById('recBtn');
+  b.classList.remove('rec'); b.innerHTML='🎙️<br>Gravar';
+  document.getElementById('recTime').textContent='';
+  document.getElementById('upLoading').classList.remove('hidden');
+  const blob=new Blob(chunks,{type:mediaRec.mimeType||'audio/webm'});
+  const fd=new FormData();
+  fd.append('audio', blob, 'historia.webm');
+  try{
+    const r=await fetch('/api/stories',{method:'POST',body:fd});
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.error||'erro');
+    alert('Guardada 🧡 «'+d.title+'»');
+    tab('list');
+  }catch(e){ alert('Erro: '+e.message); }
+  document.getElementById('upLoading').classList.add('hidden');
+}
+
+async function saveWritten(){
+  const title=document.getElementById('wtitle').value, text=document.getElementById('wtext').value;
+  if(!text.trim()) return alert('Escreve a história primeiro.');
+  const r=await fetch('/api/stories',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({title,text})});
+  const d=await r.json();
+  if(r.ok){ document.getElementById('wtext').value=''; document.getElementById('wtitle').value=''; tab('list'); }
+  else alert(d.error||'erro');
+}
+
+async function loadStories(){
+  const r=await fetch('/api/stories'); const list=await r.json();
+  const el=document.getElementById('stories');
+  if(!list.length){ el.innerHTML='<div class="card"><p class="meta">Ainda não há histórias. Grava a primeira — é a mais importante. 🧡</p></div>'; return; }
+  el.innerHTML=list.map(s=>`<div class="card">
+    <button class="del" onclick="delStory('${s.id}')">apagar</button>
+    <h3>${esc(s.title)}</h3>
+    <div class="meta">${new Date(s.created*1000).toLocaleDateString('pt-PT',{day:'numeric',month:'long',year:'numeric'})}</div>
+    <div class="story-text">${esc(s.text)}</div>
+    ${s.audio?`<audio controls src="${s.audio}"></audio>`:''}
+  </div>`).join('');
+}
+
+async function delStory(id){
+  if(!confirm('Apagar esta história?')) return;
+  await fetch('/api/stories/'+id,{method:'DELETE'});
+  loadStories();
+}
+
+let lastAnswer='';
+async function ask(){
+  const q=document.getElementById('q').value.trim(); if(!q) return;
+  document.getElementById('askLoading').classList.remove('hidden');
+  document.getElementById('answer').classList.add('hidden');
+  document.getElementById('trans').classList.add('hidden');
+  const r=await fetch('/api/ask',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({question:q})});
+  const d=await r.json();
+  document.getElementById('askLoading').classList.add('hidden');
+  if(!r.ok){ alert(d.error||'erro'); return; }
+  lastAnswer=d.answer;
+  const a=document.getElementById('answer');
+  a.textContent=d.answer; a.classList.remove('hidden');
+  document.getElementById('hearBtn').disabled=false;
+  document.getElementById('trBtn').disabled=false;
+}
+
+function hear(){
+  if(!lastAnswer) return;
+  const u=new SpeechSynthesisUtterance(lastAnswer);
+  u.lang='pt-PT'; u.rate=0.95;
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+
+async function translateAnswer(){
+  if(!lastAnswer) return;
+  const r=await fetch('/api/translate',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({text:lastAnswer,target:'français'})});
+  const d=await r.json();
+  const t=document.getElementById('trans');
+  t.textContent='🇫🇷 '+d.translation; t.classList.remove('hidden');
+}
+
+async function loadStats(){
+  try{
+    const r=await fetch('/api/stats'); const d=await r.json();
+    document.getElementById('statS').textContent=d.stories+(d.stories===1?' história':' histórias');
+    document.getElementById('statW').textContent=d.words+' palavras guardadas';
+  }catch(e){}
+}
+function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+loadStats();
+</script>
+</body>
+</html>

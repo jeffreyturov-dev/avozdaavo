@@ -1,0 +1,10 @@
+{
+  "name": "A Voz da Avó",
+  "short_name": "Voz da Avó",
+  "description": "As histórias dela. Para sempre.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf3ea",
+  "theme_color": "#b4552f",
+  "icons": []
+}
