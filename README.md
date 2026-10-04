@@ -98,6 +98,7 @@ there, the app says they haven't told that one yet — and to ask them next Sund
 ## Roadmap
 
 - [ ] Multiple voices: one archive per person (Pai, Avó, Tia…) in the same app
+- [ ] Swap in a European-Portuguese voice model (today's XTTS speaks with a slight Brazilian accent — open pieces get swapped, that's the point)
 - [ ] WhatsApp voice-message import (the family's real audio archive)
 - [ ] Export the whole memory as a printed family book (PDF)
 - [ ] Grandchildren mode: questions in French/Luxembourgish, answers in the original voice + translation

@@ -34,6 +34,8 @@ Three screens, because he's not a user, he's my father:
 
    **Na voz dele 🧡** — the answer is synthesized *in his own cloned voice*, by an open-source model running in my home.
 
+   Full honesty: today it comes out with a slight **Brazilian** accent — the open model's Portuguese was trained mostly on Brazilian data, and his is from Amares. A closed service would hide that kind of rough edge behind a polished voice you can't inspect. Here, we can see the limitation, name it, and swap the component the day a better European-Portuguese voice model ships — without asking anyone's permission. That's the point of building on open pieces: the roadmap belongs to us.
+
 Here's the full flow in motion — question, grounded answer, the story library, the one-button recorder:
 
 ![Demo of the full flow](https://raw.githubusercontent.com/jeffreyturov-dev/avozdosmeus/master/docs/demo.gif)
