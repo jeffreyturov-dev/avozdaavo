@@ -1,45 +1,49 @@
-# A Voz da Avó 🧡
-*The Grandmother's Voice — As histórias dela. Para sempre.*
+# A Voz dos Meus 🧡
+*The Voice of the Ones We Love — A voz de quem amamos. Para sempre.*
 
-Record a loved one's stories, in their own voice, and let the family ask their memory questions — forever.
-Built for my grandmother, a Portuguese emigrant in Luxembourg, so my children will always be able to hear
-*her* tell *her* stories — in her language, with her words.
+We film our children growing up. Nobody films our parents growing old.
 
-**100% local and open-source.** Her voice never leaves the house. No cloud, no subscription, no account, €0.
+Record a loved one's stories, in their own voice, and let the family ask their memory
+questions — forever. Built first for **my father**, a Portuguese emigrant in Luxembourg.
+Father, grandmother, aunt, friend — the concept is the same: **the people we love most
+are the ones we record least.**
 
-![Ask her memory](docs/shot_ask.png)
+**100% local and open-source.** Their voices never leave the house. No cloud, no
+subscription, no account, €0.
 
-**Live demo** (a temporary tunnel to the box in my home — the same one my grandmother uses):
+![Ask their memory](docs/shot_ask.png)
+
+**Live demo** (a temporary tunnel to the box in my home — the same one my father uses):
 https://tariff-ventures-income-insights.trycloudflare.com/
 
-![Her stories](docs/shot_stories.png)
+![The stories](docs/shot_stories.png)
 ![Recording is one button](docs/shot_record.png)
 
 ---
 
 ## Why this exists
 
-My grandmother left a small village in Portugal for Luxembourg decades ago.
-Her stories — the stone house, the three-day train ride, the café in Bonnevoie — live only in her head
-and in her voice. One day I realised my children might never hear them from her lips.
+My father left Portugal for Luxembourg decades ago. His stories — how he came, the work,
+the Sundays, the friends who became family — live only in his head and in his voice.
+One day I realised my children might never hear them from his lips.
 
-So I built her this:
+So I built this:
 
-1. **She tells a story** — one big red button, she just talks (Portuguese, naturally).
+1. **He tells a story** — one big red button, he just talks (Portuguese, naturally).
 2. **The app writes it down** — open-source Whisper transcribes every word, on our own machine.
-3. **The family asks her memory questions** — *"Avó, como era a tua aldeia?"* — and an open-weight
-   model (Gemma 3, running locally) answers **only** from her own stories, in warm European Portuguese,
-   read aloud in her language.
+3. **The family asks his memory questions** — *"Pai, como era a tua aldeia?"* — and an
+   open-weight model (Gemma 3, running locally) answers **only** from his own stories,
+   in warm European Portuguese, read aloud in his language.
 
-If she never told that story, the app says so — and tells you to ask her on the next visit.
-It will never invent her memories.
+If he never told that story, the app says so — and tells you to ask him on the next visit.
+It will never invent his memories.
 
 ## Why open-source matters here
 
-- **Privacy is the product.** These are a family's most intimate recordings. With a closed API they
-  would live on someone else's server. Here they never leave the house.
-- **It works with no internet** in her kitchen — recording, transcription, questions, voice.
-- **It costs €0 forever.** No subscription between her and her grandchildren.
+- **Privacy is the product.** These are a family's most intimate recordings. With a closed
+  API they would live on someone else's server. Here they never leave the house.
+- **It works with no internet** in his kitchen — recording, transcription, questions, voice.
+- **It costs €0 forever.** No subscription between him and his grandchildren.
 - **Every piece can be swapped** — Whisper, the embeddings, the model — because they're all open.
 
 ## Stack (everything open-source)
@@ -70,26 +74,27 @@ python3 server.py
 # → open http://localhost:5577 on any phone/computer on the same network
 ```
 
-Then: **Contar história** → press the red button → she talks → press again → saved & transcribed.
-**Perguntar** → the family asks → answers grounded in her stories, with **Ouvir 🔊** to hear it aloud.
+Then: **Contar história** → press the red button → they talk → press again → saved & transcribed.
+**Perguntar** → the family asks → answers grounded in their stories, with **Ouvir 🔊** to hear it aloud.
 
-## How "ask her memory" works
+## How "ask their memory" works
 
 ```
 audio ──▶ faster-whisper ──▶ story text ──▶ chunks ──▶ nomic embeddings ──▶ SQLite
                                                                       │
 question ──▶ embed ──▶ cosine search (top-k chunks) ──▶ Gemma 3 with strict
-"never invent" rules ──▶ warm answer in her language ──▶ SpeechSynthesis aloud
+"never invent" rules ──▶ warm answer in their language ──▶ SpeechSynthesis aloud
 ```
 
-The system prompt forbids adding people, places or details that are not in her stories.
-If the answer isn't there, the app says she hasn't told that one yet — and to ask her next Sunday.
+The system prompt forbids adding people, places or details that are not in the stories.
+If the answer isn't there, the app says they haven't told that one yet — and to ask them next Sunday.
 
 ## Roadmap
 
-- [ ] WhatsApp voice-message import (our family's real archive of her)
+- [ ] Multiple voices: one archive per person (Pai, Avó, Tia…) in the same app
+- [ ] WhatsApp voice-message import (the family's real audio archive)
 - [ ] Export the whole memory as a printed family book (PDF)
-- [ ] Grandchildren mode: questions in French/Luxembourgish, answers in her Portuguese + translation
+- [ ] Grandchildren mode: questions in French/Luxembourgish, answers in the original voice + translation
 - [ ] One-command installer for non-technical families
 
 ## License

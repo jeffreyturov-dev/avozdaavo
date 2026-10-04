@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-A Voz da Avó — The Grandmother's Voice.
-Record her stories. Let the family ask her memory questions.
+A Voz dos Meus — The Voice of the Ones We Love.
+Record a loved one's stories. Let the family ask their memory questions.
+Built first for my father. Works for any voice you never want to lose.
 100% local & open-source: faster-whisper (STT) + nomic-embed-text (RAG)
 + Gemma 3 via Ollama (reasoning). No data ever leaves the house.
 """
@@ -171,18 +172,18 @@ def make_title(text):
     return t[:60] or "História"
 
 SYSTEM_ASK = (
-    "Tu és a memória viva da Avó — uma avó portuguesa que emigrou para o Luxemburgo. "
+    "Tu és a memória viva do Pai — um pai português que emigrou para o Luxemburgo. "
     "Respondes à família com carinho, em português europeu simples, 3 a 6 frases.\n"
     "REGRAS ABSOLUTAS:\n"
     "1. Usa APENAS factos presentes nas histórias fornecidas. NUNCA inventes pessoas, "
     "lugares, objetos, datas ou pormenores — nem 'para completar a frase'.\n"
-    "2. Não adiciones familiares que não aparecem nas histórias (nem pais, nem irmãs, nem netos).\n"
-    "3. Se a pergunta não tiver resposta nas histórias, diz APENAS isto, com ternura: que a Avó "
+    "2. Não adiciones familiares que não aparecem nas histórias (nem pais, nem irmãos, nem filhos).\n"
+    "3. Se a pergunta não tiver resposta nas histórias, diz APENAS isto, com ternura: que o Pai "
     "ainda não contou essa história, e que lhe devem perguntar na próxima visita. NADA MAIS.\n"
     "4. Quando responderes com base numa história, não juntes frases finais sobre 'histórias "
     "que faltam contar' — responde só ao que foi perguntado.\n"
-    "5. Podes usar expressões carinhosas ('meu querido', 'ai que saudades') mas os factos "
-    "ficam exatamente como ela os contou."
+    "5. Podes usar expressões carinhosas ('meu filho', 'minha filha', 'ai que saudades') mas os "
+    "factos ficam exatamente como ele os contou."
 )
 
 @app.route("/api/ask", methods=["POST"])
@@ -193,7 +194,7 @@ def ask():
     c = db()
     rows = c.execute("SELECT story_id, text, emb FROM chunks").fetchall()
     if not rows:
-        return jsonify({"answer": "Ainda não há histórias gravadas. Grava a primeira história da Avó!",
+        return jsonify({"answer": "Ainda não há histórias gravadas. Grava a primeira história do Pai!",
                         "sources": []})
     qe = embed(q)
     scored = sorted(((cosine(qe, json.loads(r[2])), r[0], r[1]) for r in rows),

@@ -32,9 +32,9 @@ def center_text(y, txt, fnt, fill=(255, 248, 238)):
     d.text(((W - (bb[2] - bb[0])) // 2, y), txt, font=fnt, fill=fill)
 
 center_text(150, "🧡", font(90))
-center_text(270, "A Voz da Avó", font(96))
-center_text(410, "As histórias dela. Para sempre.", font(44, bold=False), fill=(255, 232, 210))
-center_text(500, "Her stories. Forever. — 100% local open-source AI", font(30, bold=False), fill=(240, 210, 185))
+center_text(270, "A Voz dos Meus", font(96))
+center_text(410, "A voz de quem amamos. Para sempre.", font(44, bold=False), fill=(255, 232, 210))
+center_text(500, "Their voices. Forever. — 100% local open-source AI", font(30, bold=False), fill=(240, 210, 185))
 
 img.save("/opt/data/projet/avozdaavo/docs/cover.png")
 print("cover saved")

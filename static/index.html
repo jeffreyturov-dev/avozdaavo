@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>A Voz da Avó</title>
-<meta name="description" content="As histórias dela. Para sempre.">
+<title>A Voz dos Meus</title>
+<meta name="description" content="A voz de quem amamos. Para sempre.">
 <link rel="manifest" href="/static/manifest.json">
 <meta name="theme-color" content="#b4552f">
 <style>
@@ -60,8 +60,8 @@
 </head>
 <body>
 <header>
-  <h1>🧡 A Voz da Avó</h1>
-  <p>As histórias dela. Para sempre.</p>
+  <h1>🧡 A Voz dos Meus</h1>
+  <p>A voz de quem amamos. Para sempre.</p>
 </header>
 <nav>
   <button id="nb-ask" class="on" onclick="tab('ask')">Perguntar</button>
@@ -73,16 +73,16 @@
   <!-- ASK -->
   <section id="tab-ask" class="tab on">
     <div class="card">
-      <h3>Pergunta qualquer coisa à memória da Avó</h3>
-      <p class="meta">Ela responde com as próprias histórias que contou. Em português, como sempre.</p>
-      <input type="text" id="q" placeholder="Ex: Avó, como era a tua aldeia em Portugal?"
+      <h3>Pergunta qualquer coisa à memória do Pai</h3>
+      <p class="meta">Ele responde com as próprias histórias que contou. Em português, como sempre.</p>
+      <input type="text" id="q" placeholder="Ex: Pai, como era a tua aldeia em Portugal?"
              onkeydown="if(event.key==='Enter')ask()">
       <div class="row">
         <button class="btn" onclick="ask()">Perguntar 🌿</button>
         <button class="btn ghost" id="hearBtn" onclick="hear()" disabled>Ouvir 🔊</button>
         <button class="btn ghost" id="trBtn" onclick="translateAnswer()" disabled>Traduire 🇫🇷</button>
       </div>
-      <div id="askLoading" class="hidden" style="margin-top:12px"><span class="spin"></span>A Avó está a lembrar-se…</div>
+      <div id="askLoading" class="hidden" style="margin-top:12px"><span class="spin"></span>O Pai está a lembrar-se…</div>
       <div id="answer" class="answer hidden"></div>
       <div id="trans" class="trans hidden"></div>
     </div>
@@ -95,8 +95,8 @@
   <!-- RECORD -->
   <section id="tab-record" class="tab">
     <div class="card" style="text-align:center">
-      <h3 style="text-align:left">Gravar uma história da Avó</h3>
-      <p class="hint">Carrega no botão, e ela conta como quiser.<br>No fim, carrega outra vez para guardar.</p>
+      <h3 style="text-align:left">Gravar uma história do Pai</h3>
+      <p class="hint">Carrega no botão, e ele conta como quiser.<br>No fim, carrega outra vez para guardar.</p>
       <button id="recBtn" class="big-btn" onclick="toggleRec()">🎙️<br>Gravar</button>
       <div id="recTime" class="hint"></div>
       <div id="upLoading" class="hidden"><span class="spin"></span>A transcrever e guardar…</div>
