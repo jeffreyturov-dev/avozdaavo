@@ -7,6 +7,14 @@ Built for my grandmother, a Portuguese emigrant in Luxembourg, so my children wi
 
 **100% local and open-source.** Her voice never leaves the house. No cloud, no subscription, no account, €0.
 
+![Ask her memory](docs/shot_ask.png)
+
+**Live demo** (a temporary tunnel to the box in my home — the same one my grandmother uses):
+https://tariff-ventures-income-insights.trycloudflare.com/
+
+![Her stories](docs/shot_stories.png)
+![Recording is one button](docs/shot_record.png)
+
 ---
 
 ## Why this exists
