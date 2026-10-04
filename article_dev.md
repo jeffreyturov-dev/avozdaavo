@@ -13,9 +13,9 @@ In 1996, a six-year-old boy got on a bus in Amares, near Braga, for a long ride 
 
 That boy was me. The man with the flowers is my father.
 
-We film our children growing up. Nobody films our parents growing old. My father carried his whole life to Luxembourg and lets the story out only in pieces, at the table, when something reminds him — and if you ask directly, he shrugs: *"Não é nada."* It's nothing.
+And today I'm a father myself — two kids who know Luxembourg as home, who speak French at school, whose Portuguese is a work in progress, and who have never seen their grandfather wait for anyone with flowers. We film our children growing up. Nobody films our parents growing old. My father carried his whole life to Luxembourg and lets the story out only in pieces, at the table, when something reminds him — and if you ask directly, he shrugs: *"Não é nada."* It's nothing.
 
-It's not nothing. So for this challenge I built the person I love most a memory the family can keep talking to — and the very first voice I put in it was my own, telling the story where he's the hero.
+It's not nothing. So for this challenge I built the person I love most a memory the family can keep talking to — and the very first voice I put in it was my own, telling the story where he's the hero. Because my memories belong to my two kids now, too: one day they'll want to know who their father was at six, and their grandfather with the flowers.
 
 ## A Voz dos Meus — The Voice of the Ones We Love
 
@@ -49,9 +49,9 @@ Here's the full flow in motion — question, grounded answer, the story library,
 
 The first version of the "ask" feature did something that looked like a success and was actually a betrayal.
 
-I asked it: *"Pai, qual era o teu prato preferido quando eras pequeno?"* — what was your favorite dish as a kid? He has never told that story. The model, eager to please, **invented one** — grilled sardines with potatoes and kale, warm and plausible and completely false. A memory machine that hallucinates isn't a memory machine. It's a fiction machine wearing my father's voice.
+I asked it: *"Pai, qual era o teu prato preferido quando eras pequeno?"* — what was your favorite dish as a kid? I (the *Pai* of this archive) have never told that story. The model, eager to please, **invented one** — grilled sardines with potatoes and kale, warm and plausible and completely false. A memory machine that hallucinates isn't a memory machine. It's a fiction machine wearing a father's voice.
 
-For a product, that's a bug. For a family archive, it's a moral failure. If my daughter asks this thing a question in twenty years, I need to trust the answer the way I'd trust her grandfather.
+For a product, that's a bug. For a family archive, it's a moral failure. If my children ask this thing a question in twenty years, I need to trust the answer the way I'd trust their grandfather.
 
 So I rebuilt the answer path around a refusal, in three layers:
 
@@ -103,9 +103,9 @@ That's what "open innovation" means when the person is someone you love: not a l
 
 The roadmap writes itself, and it isn't mine anymore — it's the family's: one archive per person (*Pai* today, *Avó* next, the tia who tells the scandalous ones after that), WhatsApp voice-message import, a printed family book for Christmas.
 
-But none of that is the point. The point is that next Sunday, at the table, when he lets out one of those pieces and shrugs *"não é nada"* — I'll press a red button.
+But none of that is the point. The point is that next Sunday, at the table, when he lets out one of those pieces and shrugs *"não é nada"* — I'll press a red button. And one day, when my two kids ask this memory who their father was at six, and who their grandfather was with the flowers, it will answer — carefully, honestly, in our voice.
 
-And it will be something. Forever. In his own voice.
+It will be something. Forever. In his own voice.
 
 ---
 
