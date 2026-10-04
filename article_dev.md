@@ -34,6 +34,10 @@ Three screens, because he's not a user, he's my father:
 
    **Na voz dele 🧡** — the answer is synthesized *in his own cloned voice*, by an open-source model running in my home.
 
+Here's the full flow in motion — question, grounded answer, the story library, the one-button recorder:
+
+![Demo of the full flow](https://raw.githubusercontent.com/jeffreyturov-dev/avozdosmeus/master/docs/demo.gif)
+
 **Live demo:** [https://tariff-ventures-income-insights.trycloudflare.com](https://tariff-ventures-income-insights.trycloudflare.com) — a temporary tunnel to the same home box my family uses; it's a kitchen appliance, not a datacenter, so be patient with it (voice cloning on a CPU takes ~2 minutes — real time for real love).
 **Source:** [github.com/jeffreyturov-dev/avozdosmeus](https://github.com/jeffreyturov-dev/avozdosmeus) (MIT — take it, build it for someone you love).
 
