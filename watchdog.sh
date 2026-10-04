@@ -18,7 +18,13 @@ if ! curl -s -m 5 http://127.0.0.1:5577/api/health >/dev/null 2>&1; then
   sleep 4
 fi
 
-# 3. Tunnel — restart if dead; if URL changed, patch README + article and push
+# 3. XTTS voice-clone service (optional but part of the demo)
+if ! curl -s -m 5 http://127.0.0.1:5578/health >/dev/null 2>&1; then
+  pkill -f "voice_server.py" 2>/dev/null; sleep 2
+  cd "$APP" && COQUI_TOS_AGREED=1 PYTHONUNBUFFERED=1 nohup ./venv-xtts/bin/python voice_server.py >> "$APP/voice.log" 2>&1 &
+fi
+
+# 4. Tunnel — restart if dead; if URL changed, patch README + article and push
 CUR=$(grep -o "https://[a-z0-9-]*\.trycloudflare\.com" "$APP/README.md" | head -1)
 if ! curl -s -m 10 "${CUR:-https://invalid.invalid}/api/health" >/dev/null 2>&1; then
   pkill -f "cloudflared tunnel" 2>/dev/null; sleep 2

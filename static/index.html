@@ -80,6 +80,7 @@
       <div class="row">
         <button class="btn" onclick="ask()">Perguntar 🌿</button>
         <button class="btn ghost" id="hearBtn" onclick="hear()" disabled>Ouvir 🔊</button>
+        <button class="btn ghost" id="hisVoiceBtn" onclick="hearHisVoice()" disabled>Na voz dele 🧡</button>
         <button class="btn ghost" id="trBtn" onclick="translateAnswer()" disabled>Traduire 🇫🇷</button>
       </div>
       <div id="askLoading" class="hidden" style="margin-top:12px"><span class="spin"></span>O Pai está a lembrar-se…</div>
@@ -210,6 +211,7 @@ async function ask(){
   const a=document.getElementById('answer');
   a.textContent=d.answer; a.classList.remove('hidden');
   document.getElementById('hearBtn').disabled=false;
+  document.getElementById('hisVoiceBtn').disabled=false;
   document.getElementById('trBtn').disabled=false;
 }
 
@@ -218,6 +220,32 @@ function hear(){
   const u=new SpeechSynthesisUtterance(lastAnswer);
   u.lang='pt-PT'; u.rate=0.95;
   speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+
+let cloneAudio=null;
+async function hearHisVoice(){
+  if(!lastAnswer) return;
+  const btn=document.getElementById('hisVoiceBtn');
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span>A gerar a voz dele… (1-2 min)';
+  try{
+    const r=await fetch('/api/speak_clone',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({text:lastAnswer,lang:'pt'})});
+    if(!r.ok){ const d=await r.json().catch(()=>({})); throw new Error(d.error||'serviço de voz offline'); }
+    const {job_id}=await r.json();
+    let audio=null;
+    for(let i=0;i<120;i++){  // poll up to 4 min
+      await new Promise(res=>setTimeout(res,2000));
+      const p=await fetch('/api/speak_clone/'+job_id);
+      if(p.status===202) continue;
+      if(!p.ok){ const d=await p.json().catch(()=>({})); throw new Error(d.error||'falha na voz'); }
+      audio=await p.blob(); break;
+    }
+    if(!audio) throw new Error('demorou demais — tenta outra vez');
+    if(cloneAudio) cloneAudio.pause();
+    cloneAudio=new Audio(URL.createObjectURL(audio));
+    cloneAudio.play();
+  }catch(e){ alert('Voz dele indisponível agora: '+e.message); }
+  btn.disabled=false; btn.innerHTML='Na voz dele 🧡';
 }
 
 async function translateAnswer(){

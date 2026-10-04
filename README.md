@@ -50,8 +50,10 @@ It will never invent his memories.
 
 | Piece | Tech | Runs |
 |---|---|---|
-| Speech-to-text | [faster-whisper](https://github.com/SYSTRAN/faster-whisper) (Whisper `medium`, int8) | local CPU |
+| Speech-to-text | [faster-whisper](https://github.com/SYSTRAN/faster-whisper) (Whisper `large-v3-turbo`, int8) | local CPU |
 | Reasoning | [Gemma 3 (4B)](https://ollama.com/library/gemma3) via [Ollama](https://ollama.com) | local |
+| Honesty gate | Strict SIM/NÃO classifier (Gemma 3) — no answer is generated unless the stories contain it | local |
+| Voice cloning | [XTTS v2](https://github.com/idiap/coqui-ai-TTS) — answers read *in his own voice* (CPML, non-commercial) | local CPU |
 | Memory (RAG) | [nomic-embed-text](https://ollama.com/library/nomic-embed-text) embeddings + SQLite | local |
 | Voice out | Browser SpeechSynthesis (`pt-PT`) | local, offline |
 | Backend | Python + Flask (stdlib HTTP to Ollama) | any old laptop / home server |
@@ -82,12 +84,16 @@ Then: **Contar história** → press the red button → they talk → press agai
 ```
 audio ──▶ faster-whisper ──▶ story text ──▶ chunks ──▶ nomic embeddings ──▶ SQLite
                                                                       │
-question ──▶ embed ──▶ cosine search (top-k chunks) ──▶ Gemma 3 with strict
+question ──▶ embed ──▶ retrieve ──▶ strict SIM/NÃO classifier ──▶ Gemma 3 with
 "never invent" rules ──▶ warm answer in their language ──▶ SpeechSynthesis aloud
+                                              ── or cloned in THEIR voice (XTTS v2)
 ```
 
-The system prompt forbids adding people, places or details that are not in the stories.
-If the answer isn't there, the app says they haven't told that one yet — and to ask them next Sunday.
+**Honesty by construction.** Before any prose is generated, a strict classifier decides
+whether the stories actually contain the answer. If they don't, the generative model is
+never called — a model cannot hallucinate what it never sees. The answering prompt also
+forbids adding people, places or details that are not in the stories. If the answer isn't
+there, the app says they haven't told that one yet — and to ask them next Sunday.
 
 ## Roadmap
 

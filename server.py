@@ -65,7 +65,7 @@ def transcribe(path):
     global _whisper
     if _whisper is None:
         from faster_whisper import WhisperModel
-        _whisper = WhisperModel("medium", device="cpu", compute_type="int8")
+        _whisper = WhisperModel("large-v3-turbo", device="cpu", compute_type="int8")
     segs, info = _whisper.transcribe(path, beam_size=5)
     text = " ".join(s.text.strip() for s in segs).strip()
     dur = getattr(info, "duration", 0.0)
@@ -186,6 +186,30 @@ SYSTEM_ASK = (
     "factos ficam exatamente como ele os contou."
 )
 
+HONEST_NO_STORY = (
+    "O Pai ainda não contou essa história. Pergunta-lhe na próxima visita — "
+    "e se ele contar, grava-a aqui. 🧡"
+)
+
+# Deterministic honesty gate: a model cannot hallucinate what it never sees.
+# Layer 1: very low embedding similarity -> honest answer, no LLM at all.
+# Layer 2: a strict classifier decides whether the stories actually CONTAIN
+# the answer; only then does the generative model speak.
+SIM_HARD_FLOOR = float(os.environ.get("SIM_HARD_FLOOR", "0.30"))
+
+CLASSIFIER_SYS = (
+    "És um classificador rigoroso. Respondes APENAS com a palavra SIM ou a palavra NÃO. "
+    "Dizes SIM unicamente se a resposta à pergunta estiver EXPLICITAMENTE escrita nas histórias. "
+    "Se as histórias falam de outro assunto, ou só roçam o tema sem responder, dizes NÃO."
+)
+
+def stories_contain_answer(ctx, q):
+    v = generate(
+        f"HISTÓRIAS:\n{ctx}\n\nPERGUNTA: {q}\n\nEstas histórias contêm a resposta à pergunta? "
+        "Responde APENAS 'SIM' ou 'NÃO'.",
+        CLASSIFIER_SYS, num_predict=6)
+    return v.strip().upper().startswith("SIM")
+
 @app.route("/api/ask", methods=["POST"])
 def ask():
     q = (request.get_json(force=True).get("question") or "").strip()
@@ -199,11 +223,18 @@ def ask():
     qe = embed(q)
     scored = sorted(((cosine(qe, json.loads(r[2])), r[0], r[1]) for r in rows),
                     key=lambda x: -x[0])[:6]
-    ctx = "\n\n---\n\n".join(s[2] for s in scored if s[0] > 0.25) or scored[0][2]
-    answer = generate(f"HISTÓRIAS DA AVÓ:\n{ctx}\n\nPERGUNTA DA FAMÍLIA: {q}\n\nRESPOSTA:",
+    best = scored[0][0]
+    if best < SIM_HARD_FLOOR:
+        return jsonify({"answer": HONEST_NO_STORY, "sources": [], "gated": "floor",
+                        "best_score": round(best, 3)})
+    ctx = "\n\n---\n\n".join(s[2] for s in scored if s[0] > 0.25)
+    if not stories_contain_answer(ctx, q):
+        return jsonify({"answer": HONEST_NO_STORY, "sources": [], "gated": "classifier",
+                        "best_score": round(best, 3)})
+    answer = generate(f"HISTÓRIAS DO PAI:\n{ctx}\n\nPERGUNTA DA FAMÍLIA: {q}\n\nRESPOSTA:",
                       SYSTEM_ASK)
     src = sorted({s[1] for s in scored if s[0] > 0.25})
-    return jsonify({"answer": answer, "sources": src})
+    return jsonify({"answer": answer, "sources": src, "best_score": round(best, 3)})
 
 @app.route("/api/translate", methods=["POST"])
 def translate():
@@ -215,6 +246,47 @@ def translate():
     out = generate(f"Traduis en {target}, naturel et simple :\n\n{text}",
                    "Tu es un traducteur. Retourne UNIQUEMENT la traduction.", num_predict=400)
     return jsonify({"translation": out})
+
+VOICE_SVC = os.environ.get("VOICE_SVC", "http://127.0.0.1:5578")
+_voice_jobs = {}  # job_id -> {"status": pending|done|error, "audio": bytes|None, "error": str}
+
+def _voice_worker(job_id, text, lang):
+    import urllib.request
+    try:
+        req = urllib.request.Request(
+            VOICE_SVC + "/speak",
+            data=json.dumps({"text": text, "lang": lang}).encode(),
+            headers={"Content-Type": "application/json"})
+        audio = urllib.request.urlopen(req, timeout=900).read()
+        _voice_jobs[job_id].update(status="done", audio=audio)
+    except Exception as e:
+        _voice_jobs[job_id].update(status="error", error=str(e))
+
+@app.route("/api/speak_clone", methods=["POST"])
+def speak_clone_start():
+    """Start async voice-clone synthesis (CPU XTTS can take ~2min; Cloudflare kills long requests)."""
+    import threading
+    body = request.get_json(force=True)
+    text = (body.get("text") or "").strip()
+    if not text:
+        return jsonify({"error": "texto vazio"}), 400
+    job_id = str(uuid.uuid4())[:10]
+    _voice_jobs[job_id] = {"status": "pending", "audio": None, "error": None}
+    threading.Thread(target=_voice_worker, args=(job_id, text, body.get("lang") or "pt"),
+                     daemon=True).start()
+    return jsonify({"job_id": job_id})
+
+@app.route("/api/speak_clone/<job_id>")
+def speak_clone_poll(job_id):
+    job = _voice_jobs.get(job_id)
+    if not job:
+        return jsonify({"error": "job desconhecido"}), 404
+    if job["status"] == "pending":
+        return jsonify({"status": "pending"}), 202
+    if job["status"] == "error":
+        return jsonify({"status": "error", "error": job["error"]}), 500
+    audio = job.pop("audio")  # one-shot delivery frees memory
+    return app.response_class(audio, mimetype="audio/wav")
 
 @app.route("/api/stats")
 def stats():
